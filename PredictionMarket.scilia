@@ -1,0 +1,137 @@
+scilla_version 0
+
+(***************************************************)
+(*               Associated library                *)
+(***************************************************)
+
+import BoolUtils
+
+library PredictionMarket
+
+type Description =
+  | Description of String
+ 
+type Status =  
+  | Status of String
+
+type Project =
+  | Project of String ByStr20
+ 
+type QuestionIdVsAnswer =
+  | QuestionIdVsAnswer of Int32 Int32
+ 
+let one_msg =
+  fun (msg : Message) =>
+    let nil_msg = Nil {Message} in
+    Cons {Message} msg nil_msg
+
+ 
+(***************************************************)
+(*             The contract definition             *)
+(***************************************************)
+contract PredictionMarket
+
+(*  Parameters *)
+(oracle     : ByStr20)
+(* max_block : BNum,*)
+(* goal      : Uint128)*)
+(*()*)
+
+(* Mutable fields *)
+field int32One: Int32 = Int32 1
+field backers : Map ByStr20 Uint128 = Emp ByStr20 Uint128
+field projectMapping: Map Int32 Project = Emp Int32 Project
+field testMapping: Map Int32 Int32 = Emp Int32 Int32
+field finalOutput: Map Int32 String = Emp Int32 String
+field userVsAnswer: Map ByStr20 String = Emp ByStr20 String
+field funded : Bool = False
+field status: String = ""
+field currentProjectId: Int32 = Int32 0
+(*field oneOne: = Uint32  = Int32 1*)
+
+
+transition addQuestion(projectDescription: String)
+(*Project ==> questions*)
+(*  projectMapping[1] := Project("First", "second", "third");*)
+
+(*  testMapping[1] := 2*)
+
+(*  tempIntKey = Int32 20;*)
+(*  tempIntValue = Int32 40;*)
+(*  currentProjectId =+1;*)
+    oneOne = Int32 1;
+    projectId <- currentProjectId;
+    newProjectId = builtin add projectId oneOne;
+(*    currentProjectId = builtin add currentProjectId 1;*)
+(*  testMapping[tempIntKey] := tempIntValue;*)
+ 
+(*  tempDescription = "First";*)
+  owner = _sender;
+(*  tempThird = "Third";*)
+ 
+  tempProject = Project projectDescription owner;
+ 
+  projectMapping[newProjectId] := tempProject ;
+ 
+  currentProjectId := projectId;
+
+(* builtin put testMapping 1 2;*)
+
+  a = False
+(*  projectMappin[1] := Project "first" "should work" "fine";*)
+end
+
+
+transition resultDecalartion(projectId: Int32, response: String)
+
+  isOracle = builtin eq _sender oracle;
+
+  match isOracle with
+    | False => throw
+    | True =>
+      finalOutput[projectId] := response
+  end
+end
+
+transition userAnswer(projectId: Int32, response: String)
+  accept;
+
+      userVsAnswer[_sender] := response (*  As of now only one question-answer is supported- *)
+(*  end*)
+end
+
+transition redeem(key: Int32)
+
+  senderAddress = _sender;
+              correctOutput <- finalOutput[key];
+              answeredByUser <- userVsAnswer[senderAddress];
+
+              match correctOutput with
+                | None =>  throw
+                | Some co =>
+                  match answeredByUser with
+                    | None => throw
+                    | Some abu =>
+                      isValidAnswerByUser = builtin eq co abu;
+                      match isValidAnswerByUser with
+                        | False =>
+                        | True =>
+                          msg  = {_tag : ""; _recipient : _sender; _amount : Uint128 57};
+                          msgs = one_msg msg;
+                          send msgs
+                      end
+
+  end
+end
+
+
+(*transition Tip (message_from_tipper : String)*)
+(*(*  accept_with_cap tip_cap;*)*)
+(*  e = { _eventname: "ThanksForTheTip" };*)
+(*  event e*)
+(*end*)
+
+
+(*transition eventResponse(e: ) *)
+(**)
+end
